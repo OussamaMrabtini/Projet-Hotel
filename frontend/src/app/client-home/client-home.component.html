@@ -1,0 +1,153 @@
+<!-- src/app/client-home/client-home.component.html -->
+<div class="home-container">
+    <!-- Header -->
+    <header class="home-header">
+      <div class="header-left">
+        <h1>Réservation d'Hôtel</h1>
+      </div>
+      <div class="header-right">
+          <i class="fas fa-phone"></i> +216 123 456 789
+      </div>
+    </header>
+  
+    <!-- Main Content -->
+    <main class="home-content">
+      <!-- Sidebar with filters -->
+      <aside class="filter-sidebar">
+        <div class="filter-section">
+          <h3>Recherche</h3>
+          <div class="search-box">
+            <input 
+              type="text"
+              [(ngModel)]="searchTerm"
+              placeholder="Rechercher par numéro ou équipement"
+              (input)="applyFilter()">
+            <i class="fas fa-search"></i>
+          </div>
+        </div>
+  
+        <div class="filter-section">
+          <h3>Filtrer par</h3>
+          
+          <!-- Type Filter -->
+          <div class="filter-group">
+            <label>Type de chambre</label>
+            <select [(ngModel)]="selectedType" (change)="applyFilter()">
+              <option value="">Tous les types</option>
+              <option *ngFor="let type of types" [value]="type">{{ type }}</option>
+            </select>
+          </div>
+          
+          <!-- Price Range Filter -->
+          <div class="filter-group">
+            <label>Prix par nuit (€)</label>
+            <div class="price-inputs">
+              <input 
+                type="number" 
+                [(ngModel)]="minPrice" 
+                placeholder="Min" 
+                (input)="applyFilter()">
+              <span>à</span>
+              <input 
+                type="number" 
+                [(ngModel)]="maxPrice" 
+                placeholder="Max" 
+                (input)="applyFilter()">
+            </div>
+          </div>
+          
+          <!-- Capacity Filter -->
+          <div class="filter-group">
+            <label>Capacité minimale</label>
+            <input 
+              type="number" 
+              [(ngModel)]="minCapacity" 
+              placeholder="Nombre de personnes" 
+              (input)="applyFilter()">
+          </div>
+          
+          <!-- Date Range Filter -->
+          <div class="filter-group">
+            <label>Période de séjour</label>
+            <div class="date-inputs">
+              <div class="date-field">
+                <label>Arrivée</label>
+                <input 
+                  type="date" 
+                  [(ngModel)]="startDate" 
+                  (change)="applyFilter()">
+              </div>
+              <div class="date-field">
+                <label>Départ</label>
+                <input 
+                  type="date" 
+                  [(ngModel)]="endDate" 
+                  (change)="applyFilter()">
+              </div>
+            </div>
+          </div>
+          
+          <button class="btn-reset" (click)="resetFilters()">
+            <i class="fas fa-undo"></i> Réinitialiser
+          </button>
+        </div>
+      </aside>
+  
+      <!-- Room Cards Grid -->
+      <section class="rooms-grid">
+        <div class="section-header">
+          <h2>Chambres disponibles</h2>
+          <div class="availability-info">
+            <i class="fas fa-calendar-check"></i> 
+            <span>Disponibilité du {{ startDate | date:'dd/MM/yyyy' }} au {{ endDate | date:'dd/MM/yyyy' }}</span>
+          </div>
+        </div>
+  
+        <div class="room-cards">
+          <div *ngIf="filteredRooms.length === 0" class="no-results">
+            <i class="fas fa-search"></i>
+            <p>Aucune chambre disponible pour ces critères</p>
+            <small>Essayez de modifier vos dates ou filtres</small>
+          </div>
+          
+          <div *ngFor="let room of filteredRooms" class="room-card">
+            <div class="room-image">
+              <img src="assets/default-room.jpg" alt="Chambre {{ room.number }}">
+              <div class="room-type">{{ room.type }}</div>
+            </div>
+            
+            <div class="room-info">
+              <div class="room-header">
+                <h3>Chambre {{ room.number }}</h3>
+                <div class="room-capacity">
+                  <i class="fas fa-user"></i> {{ room.capacity }} personne(s)
+                </div>
+              </div>
+              
+              <div class="room-price">
+                <strong>{{ room.pricePerNight | currency:'EUR':'symbol':'1.0-0' }}</strong> / nuit
+              </div>
+              
+              <div class="room-equipment">
+                <h4>Équipements:</h4>
+                <div class="equipment-tags">
+                  <span *ngFor="let equipment of getEquipmentsList(room.equipments)" class="equipment-tag">
+                    {{ equipment }}
+                  </span>
+                  <span *ngIf="!room.equipments || room.equipments.length === 0" class="equipment-tag no-equipment">
+                    Aucun équipement
+                  </span>
+                </div>
+              </div>
+              
+              <div class="room-actions">
+                <button class="btn-view" (click)="room.id ? viewRoomDetails(room.id) : null">
+                  <i class="fas fa-eye"></i> Voir les détails
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>

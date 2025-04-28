@@ -1,0 +1,135 @@
+<!-- src/app/add-room/add-room.component.html -->
+<div class="dashboard-container">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-left">
+      <h1>Ajouter une chambre</h1>
+    </div>
+    <div class="header-right">
+      <button class="btn-back" (click)="cancel()">
+        <i class="fas fa-arrow-left"></i> Retour au dashboard
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="form-content">
+    <div class="form-container">
+      <form (ngSubmit)="addRoom()" #roomForm="ngForm">
+        <!-- Room Information Section -->
+        <div class="form-section">
+          <h3>Informations générales</h3>
+          
+          <!-- Room number -->
+          <div class="form-group">
+            <label for="roomNumber">Numéro de chambre</label>
+            <input 
+              type="text" 
+              id="roomNumber" 
+              name="roomNumber"
+              [(ngModel)]="room.number" 
+              required
+              #roomNumberInput="ngModel">
+            <div *ngIf="roomNumberInput.invalid && (roomNumberInput.dirty || roomNumberInput.touched)" class="error-message">
+              Le numéro de chambre est requis.
+            </div>
+          </div>
+
+          <!-- Room type -->
+          <div class="form-group">
+            <label for="roomType">Type de chambre</label>
+            <select 
+              id="roomType" 
+              name="roomType"
+              [(ngModel)]="room.type" 
+              required
+              #roomTypeInput="ngModel">
+              <option value="" disabled>Sélectionnez un type</option>
+              <option *ngFor="let type of roomTypes" [value]="type">{{type}}</option>
+            </select>
+            <div *ngIf="roomTypeInput.invalid && (roomTypeInput.dirty || roomTypeInput.touched)" class="error-message">
+              Le type de chambre est requis.
+            </div>
+          </div>
+        </div>
+
+        <!-- Capacity and Price Section -->
+        <div class="form-section">
+          <h3>Capacité et tarification</h3>
+          
+          <!-- Capacity -->
+          <div class="form-group">
+            <label for="capacity">Capacité (personnes)</label>
+            <input 
+              type="number" 
+              id="capacity" 
+              name="capacity"
+              [(ngModel)]="room.capacity" 
+              min="1" 
+              required
+              #capacityInput="ngModel">
+            <div *ngIf="capacityInput.invalid && (capacityInput.dirty || capacityInput.touched)" class="error-message">
+              La capacité doit être au moins 1.
+            </div>
+          </div>
+
+          <!-- Price per night -->
+          <div class="form-group">
+            <label for="pricePerNight">Prix par nuit (€)</label>
+            <input 
+              type="number" 
+              id="pricePerNight" 
+              name="pricePerNight"
+              [(ngModel)]="room.pricePerNight" 
+              min="0" 
+              step="0.01" 
+              required
+              #priceInput="ngModel">
+            <div *ngIf="priceInput.invalid && (priceInput.dirty || priceInput.touched)" class="error-message">
+              Le prix par nuit doit être valide.
+            </div>
+          </div>
+        </div>
+
+        <!-- Equipments Section -->
+        <div class="form-section">
+          <h3>Équipements</h3>
+          <div class="form-group">
+            <label for="equipments">Liste d'équipements</label>
+            <textarea 
+              id="equipments" 
+              name="equipments"
+              [(ngModel)]="equipmentsText" 
+              placeholder="Entrez les équipements séparés par des virgules (ex: TV, WiFi, Minibar)"
+              rows="4"></textarea>
+            <div class="helper-text">Séparez les différents équipements par des virgules.</div>
+          </div>
+        </div>
+
+        <!-- Status Messages -->
+        <div *ngIf="successMessage" class="status-message success">
+          <i class="fas fa-check-circle"></i> {{successMessage}}
+        </div>
+        <div *ngIf="errorMessage" class="status-message error">
+          <i class="fas fa-exclamation-circle"></i> {{errorMessage}}
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" (click)="cancel()">
+            <i class="fas fa-times"></i> Annuler
+          </button>
+          <button 
+            type="submit" 
+            class="btn-submit" 
+            [disabled]="roomForm.invalid || isSubmitting">
+            <i class="fas fa-save"></i>
+            <span *ngIf="isSubmitting" class="spinner"></span>
+            <span *ngIf="!isSubmitting">Ajouter la chambre</span>
+            <span *ngIf="isSubmitting">Traitement...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>

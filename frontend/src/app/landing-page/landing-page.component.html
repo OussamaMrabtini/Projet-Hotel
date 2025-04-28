@@ -1,0 +1,27 @@
+<!-- src/app/landing-page/landing-page.component.html -->
+<div class="landing-container">
+    <div class="header">
+      <h1>Bienvenue à notre Hôtel</h1>
+      <p>Choisissez votre mode d'accès</p>
+    </div>
+    
+    <div class="options-container">
+      <div class="option-card client" (click)="navigateToClient()">
+        <div class="icon">
+          <i class="fas fa-user"></i>
+        </div>
+        <h2>Client</h2>
+        <p>Consultez les chambres disponibles et leurs caractéristiques</p>
+        <button class="btn-access">Accéder</button>
+      </div>
+      
+      <div class="option-card admin" (click)="navigateToAdmin()">
+        <div class="icon">
+          <i class="fas fa-user-shield"></i>
+        </div>
+        <h2>Administration</h2>
+        <p>Gérer les chambres, les clients et les réservations</p>
+        <button class="btn-access">Se connecter</button>
+      </div>
+    </div>
+  </div>

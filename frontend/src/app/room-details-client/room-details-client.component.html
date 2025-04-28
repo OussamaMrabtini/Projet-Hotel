@@ -1,0 +1,154 @@
+<!-- src/app/room-details-client/room-details-client.component.html -->
+<div class="dashboard-container">
+    <!-- Header -->
+    <header class="dashboard-header">
+      <div class="header-left">
+        <h1>Détails de la Chambre</h1>
+      </div>
+      <div class="header-right">
+        <button class="btn-back" routerLink="/client-home">
+          <i class="fas fa-arrow-left"></i> Retour
+        </button>
+      </div>
+    </header>
+  
+    <!-- Main Content -->
+    <main class="details-content">
+      <!-- Loading State -->
+      <div class="loading-container" *ngIf="loading">
+        <div class="loading-spinner"></div>
+        <p>Chargement des détails de la chambre...</p>
+      </div>
+  
+      <!-- Error State -->
+      <div class="error-container" *ngIf="errorMessage">
+        <div class="error-message">
+          <i class="fas fa-exclamation-circle"></i>
+          <p>{{ errorMessage }}</p>
+        </div>
+        <button class="btn-retry" (click)="loadRoomDetails()">
+          <i class="fas fa-redo"></i> Réessayer
+        </button>
+      </div>
+  
+      <!-- Room Details Card -->
+      <div class="room-details-card" *ngIf="this_room && !loading && !errorMessage">
+        <div class="room-image-section">
+          <img src="assets/default-room.jpg" alt="Chambre {{ this_room.number }}">
+          <div class="room-type-badge">{{ this_room.type }}</div>
+        </div>
+  
+        <div class="room-info-section">
+          <div class="room-header">
+            <h2>Chambre {{ this_room.number }}</h2>
+            <div class="room-status" [ngClass]="isRoomAvailable ? 'available' : 'unavailable'">
+              <i class="fas" [ngClass]="isRoomAvailable ? 'fa-check-circle' : 'fa-times-circle'"></i>
+              {{ isRoomAvailable ? 'Disponible' : 'Occupée' }}
+            </div>
+          </div>
+  
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-label">
+                <i class="fas fa-euro-sign"></i> Prix par nuit
+              </div>
+              <div class="info-value">{{ this_room.pricePerNight | currency:'EUR':'symbol':'1.0-0' }}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">
+                <i class="fas fa-user"></i> Capacité
+              </div>
+              <div class="info-value">{{ this_room.capacity }} personne(s)</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">
+                <i class="fas fa-tag"></i> Type
+              </div>
+              <div class="info-value">{{ this_room.type }}</div>
+            </div>
+          </div>
+  
+          <div class="equipment-section">
+            <h3>Équipements</h3>
+            <div class="equipment-list">
+              <span *ngFor="let equipment of getEquipmentsList(this_room.equipments)" class="equipment-tag">
+                {{ equipment }}
+              </span>
+              <span *ngIf="!this_room.equipments || this_room.equipments.length === 0" class="equipment-tag no-equipment">
+                Aucun équipement
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+      <!-- Reservations List -->
+      <div class="reservations-container" *ngIf="this_room && !loading && !errorMessage">
+        <h3>Disponibilité de la chambre</h3>
+        
+        <div class="reservation-filter">
+          <div class="filter-header">
+            <h4>Filtrer par période</h4>
+          </div>
+          <div class="filter-inputs">
+            <div class="filter-date">
+              <label for="filterStartDate">Du</label>
+              <input 
+                type="date" 
+                id="filterStartDate" 
+                [(ngModel)]="filterStartDate" 
+                (change)="loadReservations()">
+            </div>
+            <div class="filter-date">
+              <label for="filterEndDate">Au</label>
+              <input 
+                type="date" 
+                id="filterEndDate" 
+                [(ngModel)]="filterEndDate" 
+                (change)="loadReservations()">
+            </div>
+            <button class="btn-filter-reset" (click)="resetReservationFilters()">
+              <i class="fas fa-undo"></i> Réinitialiser
+            </button>
+          </div>
+        </div>
+        
+        <div class="reservations-loading" *ngIf="loadingReservations">
+          <div class="loading-spinner"></div>
+          <p>Chargement des réservations...</p>
+        </div>
+        
+        <div class="reservations-list" *ngIf="!loadingReservations">
+          <div class="no-reservations" *ngIf="roomReservations.length === 0">
+            <i class="fas fa-calendar-check"></i>
+            <p>Aucune réservation pour cette période - La chambre est entièrement disponible</p>
+          </div>
+          
+          <div class="reservation-card" *ngFor="let reservation of roomReservations">
+            <div class="reservation-dates">
+              <div class="date-item">
+                <div class="date-label"><i class="fas fa-calendar-check"></i> Arrivée</div>
+                <div class="date-value">{{ reservation.startDate | date:'yyyy/MM/dd' }}</div>
+              </div>
+              <div class="date-separator">→</div>
+              <div class="date-item">
+                <div class="date-label"><i class="fas fa-calendar-times"></i> Départ</div>
+                <div class="date-value">{{ reservation.endDate | date:'yyyy/MM/dd' }}</div>
+              </div>
+            </div>
+            
+            <div class="reservation-details">
+              <div class="detail-item">
+                <div class="detail-label"><i class="fas fa-users"></i> Personnes</div>
+                <div class="detail-value">{{ reservation.numberOfPeople }}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label"><i class="fas fa-info-circle"></i> Statut</div>
+                <div class="detail-value">Non disponible</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>

@@ -1,0 +1,273 @@
+<!-- src/app/room-details/room-details.component.html -->
+<div class="dashboard-container">
+    <!-- Header -->
+    <header class="dashboard-header">
+      <div class="header-left">
+        <h1>Détails de la Chambre</h1>
+      </div>
+      <div class="header-right">
+        <button class="btn-back" routerLink="/admin-dashboard">
+          <i class="fas fa-arrow-left"></i> Retour au dashboard
+        </button>
+      </div>
+    </header>
+  
+    <!-- Main Content -->
+    <main class="details-content">
+      <!-- Loading State -->
+      <div class="loading-container" *ngIf="loading">
+        <div class="loading-spinner"></div>
+        <p>Chargement des détails de la chambre...</p>
+      </div>
+  
+      <!-- Error State -->
+      <div class="error-container" *ngIf="errorMessage">
+        <div class="error-message">
+          <i class="fas fa-exclamation-circle"></i>
+          <p>{{ errorMessage }}</p>
+        </div>
+        <button class="btn-retry" (click)="loadRoomDetails()">
+          <i class="fas fa-redo"></i> Réessayer
+        </button>
+      </div>
+  
+      <!-- Room Details Card -->
+      <div class="room-details-card" *ngIf="this_room && !loading && !errorMessage">
+        <div class="room-image-section">
+          <img src="assets/default-room.jpg" alt="Chambre {{ this_room.number }}">
+          <div class="room-type-badge">{{ this_room.type }}</div>
+        </div>
+  
+        <div class="room-info-section">
+          <div class="room-header">
+            <h2>Chambre {{ this_room.number }}</h2>
+            <div class="room-status" [ngClass]="isRoomAvailable ? 'available' : 'unavailable'">
+              <i class="fas" [ngClass]="isRoomAvailable ? 'fa-check-circle' : 'fa-times-circle'"></i>
+              {{ isRoomAvailable ? 'Disponible' : 'Occupée' }}
+            </div>
+          </div>
+  
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-label">
+                <i class="fas fa-euro-sign"></i> Prix par nuit
+              </div>
+              <div class="info-value">{{ this_room.pricePerNight | currency:'EUR':'symbol':'1.0-0' }}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">
+                <i class="fas fa-user"></i> Capacité
+              </div>
+              <div class="info-value">{{ this_room.capacity }} personne(s)</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">
+                <i class="fas fa-tag"></i> Type
+              </div>
+              <div class="info-value">{{ this_room.type }}</div>
+            </div>
+          </div>
+  
+          <div class="equipment-section">
+            <h3>Équipements</h3>
+            <div class="equipment-list">
+              <span *ngFor="let equipment of getEquipmentsList(this_room.equipments)" class="equipment-tag">
+                {{ equipment }}
+              </span>
+              <span *ngIf="!this_room.equipments || this_room.equipments.length === 0" class="equipment-tag no-equipment">
+                Aucun équipement
+              </span>
+            </div>
+          </div>
+  
+          <div class="actions-section">
+            <button class="btn-delete">
+              <i class="fas fa-trash"></i> Supprimer la chambre
+            </button>
+            <button class="btn-reservation" (click)="toggleAddReservationForm()">
+              <i class="fas fa-calendar-plus"></i> {{ showAddReservationForm ? 'Annuler' : 'Ajouter une réservation' }}
+            </button>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Add Reservation Form -->
+      <div class="reservation-form-container" *ngIf="showAddReservationForm && !loading && !errorMessage">
+        <h3>Nouvelle Réservation</h3>
+        <form (ngSubmit)="addReservation()" #reservationForm="ngForm">
+          <div class="form-group">
+            <label for="clientId">ID Client</label>
+            <input 
+              type="number" 
+              id="roomNumber" 
+              name="roomNumber" 
+              [(ngModel)]="newReservation.clientId" 
+              required>
+            </div>
+          <div class="form-group">
+            <label for="clientName">Nom du client*</label>
+            <input 
+              type="text" 
+              id="clientName" 
+              name="clientName" 
+              [(ngModel)]="newReservation.clientName" 
+              required>
+          </div>
+          
+          <div class="form-group">
+            <label for="clientEmail">Email du client*</label>
+            <input 
+              type="email" 
+              id="clientEmail" 
+              name="clientEmail" 
+              [(ngModel)]="newReservation.clientEmail" 
+              required>
+          </div>
+          
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="startDate">Date d'arrivée*</label>
+              <input 
+                type="date" 
+                id="startDate" 
+                name="startDate" 
+                [(ngModel)]="newReservation.startDate" 
+                required>
+            </div>
+            
+            <div class="form-group">
+              <label for="endDate">Date de départ*</label>
+              <input 
+                type="date" 
+                id="endDate" 
+                name="endDate" 
+                [(ngModel)]="newReservation.endDate" 
+                required>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="numberOfPeople">Nombre de personnes*</label>
+              <input 
+                type="number" 
+                id="numberOfPeople" 
+                name="numberOfPeople" 
+                [(ngModel)]="newReservation.numberOfPeople" 
+                [max]="this_room.capacity"
+                required>
+            </div>
+            
+            <div class="form-group">
+              <label for="paymentType">Mode de paiement*</label>
+              <select 
+                id="paymentType" 
+                name="paymentType" 
+                [(ngModel)]="newReservation.paymentType" 
+                required>
+                <option value="">Sélectionner</option>
+                <option value="Carte Bancaire">Carte Bancaire</option>
+                <option value="Espèces">Espèces</option>
+                <option value="Virement">Virement</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" (click)="toggleAddReservationForm()">Annuler</button>
+            <button type="submit" class="btn-submit" [disabled]="!reservationForm.form.valid">
+              <i class="fas fa-save"></i> Enregistrer la réservation
+            </button>
+          </div>
+        </form>
+      </div>
+      
+      <!-- Reservations List -->
+      <div class="reservations-container" *ngIf="this_room && !loading && !errorMessage">
+        <h3>Réservations de cette chambre</h3>
+        
+        <div class="reservation-filter">
+          <div class="filter-header">
+            <h4>Filtrer par période</h4>
+          </div>
+          <div class="filter-inputs">
+            <div class="filter-date">
+              <label for="filterStartDate">Du</label>
+              <input 
+                type="date" 
+                id="filterStartDate" 
+                [(ngModel)]="filterStartDate" 
+                (change)="loadReservations()">
+            </div>
+            <div class="filter-date">
+              <label for="filterEndDate">Au</label>
+              <input 
+                type="date" 
+                id="filterEndDate" 
+                [(ngModel)]="filterEndDate" 
+                (change)="loadReservations()">
+            </div>
+            <button class="btn-filter-reset" (click)="resetReservationFilters()">
+              <i class="fas fa-undo"></i> Réinitialiser
+            </button>
+          </div>
+        </div>
+        
+        <div class="reservations-loading" *ngIf="loadingReservations">
+          <div class="loading-spinner"></div>
+          <p>Chargement des réservations...</p>
+        </div>
+        
+        <div class="reservations-list" *ngIf="!loadingReservations">
+          <div class="no-reservations" *ngIf="roomReservations.length === 0">
+            <i class="fas fa-calendar-times"></i>
+            <p>Aucune réservation trouvée pour cette période</p>
+          </div>
+          
+          <div class="reservation-card" *ngFor="let reservation of roomReservations">
+            <div class="reservation-header">
+              <div class="reservation-client">
+                <i class="fas fa-user"></i>
+                <span>{{getClientNameById(getClientIdByReservationId(reservation.id))}}</span>
+              </div>
+              <div class="reservation-id">ID Client : {{ getClientIdByReservationId(reservation.id) }}</div>
+            </div>
+            
+            <div class="reservation-dates">
+              <div class="date-item">
+                <div class="date-label"><i class="fas fa-calendar-check"></i> Arrivée</div>
+                <div class="date-value">{{ reservation.startDate | date:'yyyy/MM/dd' }}</div>
+              </div>
+              <div class="date-separator">→</div>
+              <div class="date-item">
+                <div class="date-label"><i class="fas fa-calendar-times"></i> Départ</div>
+                <div class="date-value">{{ reservation.endDate | date:'yyyy/MM/dd' }}</div>
+              </div>
+            </div>
+            
+            <div class="reservation-details">
+              <div class="detail-item">
+                <div class="detail-label"><i class="fas fa-users"></i> Personnes</div>
+                <div class="detail-value">{{ reservation.numberOfPeople }}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label"><i class="fas fa-credit-card"></i> Paiement</div>
+                <div class="detail-value">{{ reservation.paymentType }}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label"><i class="fas fa-euro-sign"></i> Montant</div>
+                <div class="detail-value highlight">{{ reservation.totalAmount | currency:'EUR':'symbol':'1.0-0' }}</div>
+              </div>
+            </div>
+            
+            <div class="reservation-actions">
+              <button class="btn-cancel-reservation" (click)="confirmCancelReservation(reservation.id)">
+                <i class="fas fa-ban"></i> Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
