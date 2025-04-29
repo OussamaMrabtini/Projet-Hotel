@@ -144,7 +144,7 @@
               <button class="btn-edit"  (click)="room.id ? viewRoomDetails(room.id) : null">
                 <i class="fas fa-book"></i> Details
               </button>
-              <button class="btn-delete">
+              <button class="btn-delete" (click)="deleteRoom(room.id)">
                 <i class="fas fa-trash"></i> Supprimer
               </button>
             </div>

@@ -1,4 +1,3 @@
-// src/app/admin-login/admin-login.component.ts
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
@@ -18,9 +17,7 @@ export class AdminLoginComponent {
 
   login() {
     if (this.password === this.ADMIN_PASSWORD) {
-      // Set a flag in localStorage to indicate the admin is logged in
       localStorage.setItem('adminLoggedIn', 'true');
-      // Navigate to admin dashboard
       this.router.navigate(['/admin-dashboard']);
     } else {
       this.errorMessage = 'Mot de passe incorrect';

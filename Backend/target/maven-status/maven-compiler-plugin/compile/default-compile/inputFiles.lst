@@ -7,6 +7,7 @@ D:\Study\CI2\Angular\hotel-management-system\Backend\src\main\java\com\example\h
 D:\Study\CI2\Angular\hotel-management-system\Backend\src\main\java\com\example\hotel\HotelReservationApplication.java
 D:\Study\CI2\Angular\hotel-management-system\Backend\src\main\java\com\example\hotel\model\Reservation.java
 D:\Study\CI2\Angular\hotel-management-system\Backend\src\main\java\com\example\hotel\service\ClientService.java
+D:\Study\CI2\Angular\hotel-management-system\Backend\src\main\java\com\example\hotel\config\CorsConfig.java
 D:\Study\CI2\Angular\hotel-management-system\Backend\src\main\java\com\example\hotel\controller\ClientController.java
 D:\Study\CI2\Angular\hotel-management-system\Backend\src\main\java\com\example\hotel\model\Client.java
 D:\Study\CI2\Angular\hotel-management-system\Backend\src\main\java\com\example\hotel\service\RoomService.java

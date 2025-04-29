@@ -45,7 +45,6 @@ public class ReservationController {
                                    @RequestParam String end) {
         LocalDate startDate = LocalDate.parse(start);
         LocalDate endDate = LocalDate.parse(end);
-        // Si la liste n'est pas vide, la chambre est réservée au moins un jour dans la période
         boolean reserved = !reservationService.getReservationsForRoomAndPeriod(roomId, startDate, endDate).isEmpty();
         return !reserved;
     }

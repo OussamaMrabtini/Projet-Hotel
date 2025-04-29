@@ -11,10 +11,10 @@ public class Reservation {
     private Long id;
 
     @Column(name = "room_id", nullable = false)
-    private Long roomId;  // ✅ Simple Long ID (no @ManyToOne)
+    private Long roomId; 
 
     @Column(name = "client_id", nullable = false)
-    private Long clientId;  // ✅ Simple Long ID (no @ManyToOne)
+    private Long clientId;  
 
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
@@ -31,7 +31,6 @@ public class Reservation {
     @Column(name = "total_amount", nullable = false)
     private double totalAmount;
 
-    // Constructors
     public Reservation() {}
 
     public Reservation(Long id, Long roomId, Long clientId, LocalDate startDate, LocalDate endDate, 
@@ -46,7 +45,6 @@ public class Reservation {
         this.totalAmount = totalAmount;
     }
 
-    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

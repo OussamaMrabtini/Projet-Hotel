@@ -21,23 +21,17 @@ export class AddRoomComponent implements OnInit {
   isSubmitting = false;
   errorMessage = '';
   successMessage = '';
-  equipmentsText = ''; // User input from the textarea
+  equipmentsText = ''; 
 
   constructor(private roomService: RoomService, private router: Router) {}
 
   ngOnInit(): void {}
-
-  /**
-   * Updates the room.equipments field based on the user's input.
-   * Ensures proper formatting (trim spaces and remove empty values).
-   */
   updateEquipments(): void {
     const formattedEquipments = this.equipmentsText
       .split(',')
       .map(equip => equip.trim())
-      .filter(equip => equip.length > 0); // Remove empty values
-
-    this.room.equipments = formattedEquipments.join(', '); // Store in string format
+      .filter(equip => equip.length > 0);
+    this.room.equipments = formattedEquipments.join(', ');
   }
 
   addRoom(): void {
@@ -45,7 +39,6 @@ export class AddRoomComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    // Ensure the equipments field is properly formatted
     this.updateEquipments();
 
     this.roomService.addRoom(this.room).subscribe({
@@ -53,7 +46,6 @@ export class AddRoomComponent implements OnInit {
         this.isSubmitting = false;
         this.successMessage = `La chambre ${result.number} a été ajoutée avec succès!`;
 
-        // Reset form
         this.room = {
           number: '',
           type: '',

@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RoomService } from '../services/room.service';
 import { ReservationService } from '../services/reservation.service';
 import { Room } from '../models/room.model';
-import { Reservation } from '../models/reservation.model';
 import { formatDate } from '@angular/common';
 
 interface AvailabilityCheck {
@@ -23,12 +22,10 @@ export class RoomDetailsClientComponent implements OnInit {
   loadingReservations = false;
   isRoomAvailable = true;
   
-  // Reservation listing
   roomReservations: any[] = [];
   filterStartDate: string = '';
   filterEndDate: string = '';
 
-  // Availability check
   showAvailabilityCheck = false;
   checkDates: AvailabilityCheck = {
     startDate: '',
@@ -59,12 +56,9 @@ export class RoomDetailsClientComponent implements OnInit {
           this.this_room = data;
           this.loading = false;
           
-          // Initialize default filter dates to current month
           const today = new Date();
-          // Load reservations for the room
           this.loadReservations();
           
-          // Check if room is currently available
           this.checkRoomAvailability();
 
         },
@@ -83,13 +77,11 @@ export class RoomDetailsClientComponent implements OnInit {
   loadReservations(): void {
     this.loadingReservations = true;
     
-    // Use default dates if not specified
     const startDate = this.filterStartDate || '1900-01-01';
     const endDate = this.filterEndDate || '2100-01-01';
     
     this.reservationService.getReservationsForRoom(this.this_room.id, startDate, endDate).subscribe({
       next: (reservations) => {
-        // For clients, we only show booking periods without client details
         this.roomReservations = reservations.map(res => ({
           id: res.id,
           startDate: res.startDate,
@@ -122,7 +114,6 @@ export class RoomDetailsClientComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error checking room availability:', error);
-        // Default to available in case of error
         this.isRoomAvailable = true;
       }
     });

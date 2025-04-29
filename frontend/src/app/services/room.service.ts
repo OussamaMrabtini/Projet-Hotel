@@ -32,7 +32,7 @@ export class RoomService {
     return this.http.get<Room[]>(`${this.apiUrl}/filter`, { params });
   }
 
-  deleteRoom(id: number): Observable<void> {
+  deleteRoom(id: number | undefined): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

@@ -81,7 +81,7 @@
           </div>
   
           <div class="actions-section">
-            <button class="btn-delete">
+            <button class="btn-delete" (click)="deleteRoom(this_room.id)">
               <i class="fas fa-trash"></i> Supprimer la chambre
             </button>
             <button class="btn-reservation" (click)="toggleAddReservationForm()">

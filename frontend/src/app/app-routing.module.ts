@@ -1,4 +1,3 @@
-// src/app/app-routing.module.ts
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LandingPageComponent } from './landing-page/landing-page.component';
@@ -7,7 +6,7 @@ import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.compo
 import { AddRoomComponent } from './add-room/add-room.component';
 import { AdminAuthGuard } from './guards/admin-auth.guard';
 import { RoomDetailsComponent } from './room-details/room-details.component';
-import { ClientHomeComponent } from './client-home/client-home.component'; // Placeholder - will update later
+import { ClientHomeComponent } from './client-home/client-home.component';
 import { RoomDetailsClientComponent } from './room-details-client/room-details-client.component'; 
 
 const routes: Routes = [
@@ -23,7 +22,7 @@ const routes: Routes = [
     component: AddRoomComponent,
     canActivate: [AdminAuthGuard]
   },
-  { path: 'room-details/:id', component: RoomDetailsComponent, canActivate:[AdminAuthGuard] }, // Route for room details
+  { path: 'room-details/:id', component: RoomDetailsComponent, canActivate:[AdminAuthGuard] },
   { path: 'client-home', component: ClientHomeComponent },
   { path: 'client-home-room/:id', component: RoomDetailsClientComponent},
   { path: '**', redirectTo: '/' },

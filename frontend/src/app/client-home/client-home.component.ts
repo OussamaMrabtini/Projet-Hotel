@@ -1,4 +1,3 @@
-// src/app/client-home/client-home.component.ts
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
@@ -17,7 +16,6 @@ export class ClientHomeComponent implements OnInit {
   rooms: Room[] = [];
   filteredRooms: Room[] = [];
   
-  // Filter variables
   searchTerm: string = '';
   selectedType: string = '';
   minPrice: number | null = null;
@@ -43,7 +41,7 @@ export class ClientHomeComponent implements OnInit {
       next: (data) => {
         this.rooms = data;
         this.filteredRooms = [...this.rooms];
-        this.applyFilter(); // Apply filter with default dates
+        this.applyFilter();
       },
       error: (error) => {
         console.error('Error loading rooms:', error);
@@ -52,22 +50,18 @@ export class ClientHomeComponent implements OnInit {
   }
 
   applyFilter(): void {
-    // First apply all local filters
     this.filteredRooms = this.rooms.filter(room => {
-      // Filter by search term (number or equipment)
       if (this.searchTerm && 
           !room.number.toLowerCase().includes(this.searchTerm.toLowerCase()) &&
           !room.equipments?.toLowerCase().includes(this.searchTerm.toLowerCase())) {
         return false;
       }
       
-      // Filter by type
       if (this.selectedType && this.selectedType !== 'Tous les types' && 
           room.type.toLowerCase() !== this.selectedType.toLowerCase()) {
         return false;
       }
       
-      // Filter by price range
       if (this.minPrice !== null && room.pricePerNight < this.minPrice) {
         return false;
       }
@@ -75,7 +69,6 @@ export class ClientHomeComponent implements OnInit {
         return false;
       }
       
-      // Filter by capacity
       if (this.minCapacity !== null && room.capacity < this.minCapacity) {
         return false;
       }
@@ -83,21 +76,17 @@ export class ClientHomeComponent implements OnInit {
       return true;
     });
     
-    // If dates are selected, check availability with server
     if (this.startDate) {
       if (this.endDate) {
-        // Create an array of availability check observables
         const availabilityChecks = this.filteredRooms.map(room => 
           this.reservationService.isRoomAvailable(room.id!, this.startDate, this.endDate).pipe(
-            catchError(() => of(false)) // Handle errors by assuming room is not available
+            catchError(() => of(false))
           )
         );
         
-        // Use forkJoin to wait for all availability checks to complete
         if (availabilityChecks.length > 0) {
           forkJoin(availabilityChecks).subscribe({
             next: (results) => {
-              // Filter rooms based on availability results
               this.filteredRooms = this.filteredRooms.filter((room, index) => results[index]);
             },
             error: (error) => {
@@ -107,18 +96,15 @@ export class ClientHomeComponent implements OnInit {
         }
       }
       else if (this.endDate ==''){
-        // Create an array of availability check observables
         const availabilityChecks = this.filteredRooms.map(room => 
           this.reservationService.isRoomAvailable(room.id!, this.startDate, "2200-01-01").pipe(
-            catchError(() => of(false)) // Handle errors by assuming room is not available
+            catchError(() => of(false))
           )
         );
         
-        // Use forkJoin to wait for all availability checks to complete
         if (availabilityChecks.length > 0) {
           forkJoin(availabilityChecks).subscribe({
             next: (results) => {
-              // Filter rooms based on availability results
               this.filteredRooms = this.filteredRooms.filter((room, index) => results[index]);
             },
             error: (error) => {
@@ -137,15 +123,11 @@ export class ClientHomeComponent implements OnInit {
     this.maxPrice = null;
     this.minCapacity = null;
     
-    // Reset to today and tomorrow
-    const today = new Date();
-    this.startDate = today.toISOString().split('T')[0];
-    const tomorrow = new Date();
-    tomorrow.setDate(today.getDate() + 1);
-    this.endDate = tomorrow.toISOString().split('T')[0];
+    this.startDate = "";
+    this.endDate = "";
     
     this.filteredRooms = [...this.rooms];
-    this.applyFilter(); // Apply filter with reset dates
+    this.applyFilter();
   }
 
   getEquipmentsList(equipments: string): string[] {

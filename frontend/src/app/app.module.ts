@@ -1,4 +1,3 @@
-// src/app/app.module.ts
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
@@ -15,7 +14,6 @@ import { AddRoomComponent } from './add-room/add-room.component';
 import { RouterModule } from '@angular/router';
 
 
-// Import our services
 import { RoomService } from './services/room.service';
 import { ClientService } from './services/client.service';
 import { ReservationService } from './services/reservation.service';

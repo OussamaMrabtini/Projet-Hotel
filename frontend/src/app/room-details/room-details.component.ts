@@ -9,6 +9,7 @@ import { Reservation } from '../models/reservation.model';
 import { formatDate } from '@angular/common';
 
 
+
 export interface ReservationForm {
   clientId: number;
   clientName: string;
@@ -31,7 +32,6 @@ export class RoomDetailsComponent implements OnInit {
   loadingReservations = false;
   isRoomAvailable = true;
 
-  // Reservation details
   reservation: Reservation | null = null;
   reservationId: number | null = null;
   reservationStartDate: string = '';
@@ -40,16 +40,13 @@ export class RoomDetailsComponent implements OnInit {
   reservationPaymentType: string = '';
   reservationTotalAmount: number = 0;
   
-  // Reservation listing
   roomReservations: any[] = [];
   filterStartDate: string = '';
   filterEndDate: string = '';
 
-  // Clients that made reservations
   clients: Client[] = [];
   loadingClients = false;
   
-  // Add reservation form
   showAddReservationForm = false;
   newReservation: ReservationForm = {
     clientId: 0,
@@ -85,13 +82,10 @@ export class RoomDetailsComponent implements OnInit {
           this.this_room = data;
           this.loading = false;
           
-          // Initialize default filter dates to current month
           const today = new Date();
           
-          // Load reservations for the room
           this.loadReservations();
           
-          // Check if room is currently available
           this.checkRoomAvailability();
         },
         error: (error) => {
@@ -109,7 +103,6 @@ export class RoomDetailsComponent implements OnInit {
   loadReservations(): void {
     this.loadingReservations = true;
     
-    // Use default dates if not specified
     const startDate = this.filterStartDate || '1900-01-01';
     const endDate = this.filterEndDate || '2100-01-01';
     
@@ -171,7 +164,6 @@ export class RoomDetailsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error checking room availability:', error);
-        // Default to available in case of error
         this.isRoomAvailable = true;
       }
     });
@@ -182,7 +174,6 @@ export class RoomDetailsComponent implements OnInit {
     this.showAddReservationForm = !this.showAddReservationForm;
     
     if (this.showAddReservationForm) {
-      // Initialize form with default values
       const today = new Date();
       this.newReservation = {
         clientId: 0,
@@ -196,7 +187,6 @@ export class RoomDetailsComponent implements OnInit {
     }
   }
 
-    // check if the name id combo of the clint math the name and id in the client list
     checkClientNameId(): boolean {
       const client = this.clients.find(c => c.id === this.newReservation.clientId);
       if (client) {
@@ -209,13 +199,11 @@ export class RoomDetailsComponent implements OnInit {
     }
   
   addReservation(): void {
-    // check uf start date is before end date
     if (new Date(this.newReservation.startDate) >= new Date(this.newReservation.endDate)) {
       alert('La date de début doit être antérieure à la date de fin.');
       return;
     }
 
-    //check if the room is available
     this.reservationService.isRoomAvailable(this.this_room.id, this.newReservation.startDate, this.newReservation.endDate)
       .subscribe({
         next: (available) => {
@@ -225,7 +213,6 @@ export class RoomDetailsComponent implements OnInit {
             return;
           }
           
-          // Only proceed with reservation if room is available
           this.createReservation();
         },
         error: (error) => {
@@ -234,7 +221,7 @@ export class RoomDetailsComponent implements OnInit {
         }
       });
   }
-  // Check if the client ID and name match
+
   checkClientIdName(): boolean {
     const client = this.clients.find(c => c.id === this.newReservation.clientId);
     if (client) {
@@ -244,9 +231,7 @@ export class RoomDetailsComponent implements OnInit {
     }
     return true;
   }
-  // Separate method to create the reservation
   private createReservation(): void {
-    // Check if the client ID and name match
     if (!this.checkClientIdName()) {
       alert('Le nom du client ne correspond pas à l\'identifiant du client enregistré.');
       return;
@@ -259,13 +244,11 @@ export class RoomDetailsComponent implements OnInit {
     
     this.clientService.addClient(newClient).subscribe({
       next: (client) => {
-        // Calculate total amount (days * price per night)
         const startDate = new Date(this.newReservation.startDate);
         const endDate = new Date(this.newReservation.endDate);
         const days = Math.max(1, Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
         const totalAmount = days * this.this_room.pricePerNight;
         
-        // Create reservation
         const reservationData: Reservation = {
           roomId: this.this_room.id || 0,
           clientId: client.id || 0,
@@ -314,5 +297,19 @@ export class RoomDetailsComponent implements OnInit {
 
   getEquipmentsList(equipments: string): string[] {
     return equipments ? equipments.split(',').map(item => item.trim()) : [];
+  }
+
+  deleteRoom(roomId: number | undefined): void {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette chambre ?')) {
+      this.roomService.deleteRoom(roomId).subscribe({
+        next: () => {
+          alert('Chambre supprimée avec succès !');
+          this.router.navigate(['/admin-dashboard']);
+        },
+        error: (error) => {
+          console.error('Error deleting room:', error);
+        }
+      });
+    }
   }
 }
